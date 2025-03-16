@@ -1,6 +1,6 @@
-<div style="text-align: center;">
-  <img src="assets/icon.png" alt="Search Everywhere Icon" width="100" height="100">
-</div>
+<p align="center">
+  <img width="150" height="150" src="https://github.com/persiyanov/search-everywhere/blob/main/assets/icon.png?raw=true">
+</p>
 
 # Search Everywhere for VSCode
 
