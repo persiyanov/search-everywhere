@@ -3,13 +3,13 @@
   "displayName": "Search Everywhere",
   "description": "PyCharm-style Search Everywhere with fuzzy search, class filter, and intelligent prioritization",
   "version": "0.1.0",
-  "publisher": "cursor-team",
+  "publisher": "persiyanov",
   "author": {
-    "name": "Cursor Team"
+    "name": "Dimitri Persiianov"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/persiyanov/vscode-search-everywhere.git"
+    "url": "https://github.com/persiyanov/search-everywhere.git"
   },
   "engines": {
     "vscode": "^1.96.0"
@@ -19,7 +19,7 @@
   ],
   "keywords": [
     "search",
-    "navigation",
+    "everywhere",
     "fuzzy",
     "intellij",
     "pycharm"

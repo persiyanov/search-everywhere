@@ -1,3 +1,5 @@
+![Search Everywhere Icon](assets/icon.png)
+
 # Search Everywhere for VSCode
 
 A fast, fuzzy "Search Everywhere" feature for VSCode, inspired by the IntelliJ/PyCharm functionality. This extension provides a unified search interface for files, classes, symbols, and commands with intelligent prioritization and filtering.
