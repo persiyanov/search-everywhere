@@ -1,4 +1,6 @@
-![Search Everywhere Icon](assets/icon.png)
+<div style="text-align: center;">
+  <img src="assets/icon.png" alt="Search Everywhere Icon" width="100" height="100">
+</div>
 
 # Search Everywhere for VSCode
 
