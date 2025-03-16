@@ -1,0 +1,137 @@
+{
+  "name": "search-everywhere",
+  "displayName": "Search Everywhere",
+  "description": "PyCharm-style Search Everywhere with fuzzy search, class filter, and intelligent prioritization",
+  "version": "0.1.0",
+  "publisher": "cursor-team",
+  "author": {
+    "name": "Cursor Team"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/persiyanov/vscode-search-everywhere.git"
+  },
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "search",
+    "navigation",
+    "fuzzy",
+    "intellij",
+    "pycharm"
+  ],
+  "icon": "assets/icon.png",
+  "galleryBanner": {
+    "color": "#2d3748",
+    "theme": "dark"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "search-everywhere.search",
+        "title": "Search Everywhere"
+      },
+      {
+        "command": "search-everywhere.rebuildIndex",
+        "title": "Search Everywhere: Rebuild Index"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "search-everywhere.search",
+        "key": "shift shift",
+        "mac": "shift shift"
+      }
+    ],
+    "configuration": {
+      "title": "Search Everywhere",
+      "properties": {
+        "searchEverywhere.indexing.includeFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include files in search results"
+        },
+        "searchEverywhere.indexing.includeSymbols": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include symbols (functions, classes, variables) in search results"
+        },
+        "searchEverywhere.indexing.includeCommands": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include VSCode commands in search results"
+        },
+        "searchEverywhere.activity.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable personalized results based on user activity"
+        },
+        "searchEverywhere.activity.weight": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Weight of user activity in search results (0-1). Higher values prioritize frequently accessed items."
+        },
+        "searchEverywhere.performance.maxResults": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum number of results to show"
+        },
+        "searchEverywhere.fuzzySearch.library": {
+          "type": "string",
+          "default": "fuzzysort",
+          "enum": ["fuzzysort", "fuzzaldrin-plus"],
+          "description": "Fuzzy search library to use"
+        },
+        "searchEverywhere.exclusions": {
+          "type": "array",
+          "default": [],
+          "description": "Global exclusion patterns for files and symbols. These are applied to all search providers and are added to the built-in exclusions.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "esbuild": "^0.25.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.7.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  },
+  "dependencies": {
+    "fuzzysort": "^2.0.4",
+    "fuzzaldrin-plus": "^0.6.0"
+  }
+}
