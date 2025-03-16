@@ -1,6 +1,6 @@
 {
   "name": "search-everywhere",
-  "displayName": "Search Everywhere",
+  "displayName": "JetBrains Search Everywhere",
   "description": "PyCharm-style Search Everywhere with fuzzy search, class filter, and intelligent prioritization",
   "version": "0.1.0",
   "publisher": "extruct-ai",
@@ -14,6 +14,7 @@
   "engines": {
     "vscode": "^1.96.0"
   },
+  "pricing": "Free",
   "categories": [
     "Other"
   ],
