@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { getConfiguration } from './config';
+import Logger from './logging';
+import { minimatch } from 'minimatch';
 
 /**
  * Utility for managing exclusion patterns that are shared across providers
@@ -81,9 +83,15 @@ export class ExclusionPatterns {
         // Add any user-configured exclude patterns from settings
         const config = getConfiguration();
         if (config.exclusions && Array.isArray(config.exclusions)) {
-            return [...defaultPatterns, ...config.exclusions];
+            const allPatterns = [...defaultPatterns, ...config.exclusions];
+            Logger.debug(`Loaded exclusion patterns - Default: ${defaultPatterns.length}, User: ${config.exclusions.length}, Total: ${allPatterns.length}`);
+            if (config.debug && config.exclusions.length > 0) {
+                Logger.debug(`User-configured exclusions: ${config.exclusions.join(', ')}`);
+            }
+            return allPatterns;
         }
         
+        Logger.debug(`Loaded exclusion patterns - Default: ${defaultPatterns.length}, User: 0, Total: ${defaultPatterns.length}`);
         return defaultPatterns;
     }
     
@@ -92,30 +100,47 @@ export class ExclusionPatterns {
      */
     public static getExclusionGlob(): string {
         const patterns = this.getExclusionPatterns();
-        return `{${patterns.join(',')}}`;
+        const glob = `{${patterns.join(',')}}`;
+        Logger.debug(`Generated exclusion glob pattern with ${patterns.length} patterns`);
+        return glob;
     }
     
     /**
      * Check if a URI should be excluded based on the current exclusion patterns
      */
     public static shouldExclude(uri: vscode.Uri): boolean {
-        const patterns = this.getExclusionPatterns();
-        const path = uri.fsPath;
+        // Don't exclude non-file URIs (like symbols)
+        if (uri.scheme !== 'file') {
+            Logger.debug(`Skipping exclusion check for non-file URI: ${uri.toString()} (scheme: ${uri.scheme})`);
+            return false;
+        }
+
+        // Get relative path from workspace root
+        const relativePath = vscode.workspace.asRelativePath(uri);
+        Logger.debug(`Checking exclusions for: ${relativePath}`);
         
-        // Check if path matches any exclusion pattern
+        // Check against each pattern
+        const patterns = this.getExclusionPatterns();
+        Logger.debug(`Testing against ${patterns.length} patterns`);
+        
         for (const pattern of patterns) {
-            // Handle glob patterns by converting to a simple check
-            // This is a simplified approach - not a full glob implementation
-            const simplifiedPattern = pattern
-                .replace(/\*\*/g, '') // Remove ** wildcards
-                .replace(/\*/g, '')   // Remove * wildcards
-                .replace(/^\/+|\/+$/g, ''); // Remove leading/trailing slashes
-                
-            if (simplifiedPattern && path.includes(simplifiedPattern)) {
+            const matches = minimatch(relativePath, pattern, {
+                dot: true,        // Match dot files
+                matchBase: true,  // Match basename if pattern has no slashes
+                nocase: true,     // Case insensitive matching
+                nocomment: true,  // Don't treat leading # as comments
+                nonegate: true,   // Don't treat leading ! as negation
+                noglobstar: false // Enable ** matching (default, but being explicit)
+            });
+            Logger.debug(`  Pattern "${pattern}": ${matches ? 'matches' : 'no match'}`);
+            
+            if (matches) {
+                Logger.debug(`Excluded: ${relativePath} (matched pattern: ${pattern})`);
                 return true;
             }
         }
         
+        Logger.debug(`Not excluded: ${relativePath}`);
         return false;
     }
 } 

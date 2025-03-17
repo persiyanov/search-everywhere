@@ -3,10 +3,14 @@
 import * as vscode from 'vscode';
 import { SearchService } from './core/search-service';
 import { SearchUI } from './ui/search-ui';
+import Logger from './utils/logging';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	Logger.initialize();
+	Logger.debug('Search Everywhere extension activated');
+	
 	console.log('Activating Search Everywhere extension...');
 	
 	// Create the search service
