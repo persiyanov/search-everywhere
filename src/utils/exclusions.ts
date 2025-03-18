@@ -117,11 +117,9 @@ export class ExclusionPatterns {
 
         // Get relative path from workspace root
         const relativePath = vscode.workspace.asRelativePath(uri);
-        Logger.debug(`Checking exclusions for: ${relativePath}`);
         
         // Check against each pattern
         const patterns = this.getExclusionPatterns();
-        Logger.debug(`Testing against ${patterns.length} patterns`);
         
         for (const pattern of patterns) {
             const matches = minimatch(relativePath, pattern, {
@@ -132,15 +130,13 @@ export class ExclusionPatterns {
                 nonegate: true,   // Don't treat leading ! as negation
                 noglobstar: false // Enable ** matching (default, but being explicit)
             });
-            Logger.debug(`  Pattern "${pattern}": ${matches ? 'matches' : 'no match'}`);
-            
+
             if (matches) {
                 Logger.debug(`Excluded: ${relativePath} (matched pattern: ${pattern})`);
                 return true;
             }
         }
-        
-        Logger.debug(`Not excluded: ${relativePath}`);
+        Logger.debug(`Included: ${relativePath}`);
         return false;
     }
 } 

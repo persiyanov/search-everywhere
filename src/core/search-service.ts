@@ -18,6 +18,7 @@ export class SearchService {
     private allItems: SearchItem[] = [];
     private recentlyModifiedFiles: Map<string, number> = new Map(); // Uri -> timestamp
     private activityDebouncer: Debouncer;
+    private indexUpdateDebouncer: Debouncer;
     
     /**
      * Initialize the search service
@@ -29,8 +30,9 @@ export class SearchService {
         // Create the searcher based on configuration
         this.searcher = SearchFactory.createSearcher(this.config.fuzzySearch.library);
         
-        // Set up debouncer for tracking activity
+        // Set up debouncers
         this.activityDebouncer = new Debouncer(500);
+        this.indexUpdateDebouncer = new Debouncer(3500); // Wait a bit longer than provider refresh
         
         // Register search providers
         this.registerProviders();
@@ -55,8 +57,71 @@ export class SearchService {
         // Track file activity
         this.trackFileActivity();
         
+        // Watch for file changes to update indexes
+        this.watchFileChanges();
+        
         // Initial index
         this.refreshIndex();
+    }
+    
+    /**
+     * Watch for file changes to update the indexes
+     */
+    private watchFileChanges(): void {
+        // Watch for file saves - the providers will refresh internally, we need to collect their results
+        vscode.workspace.onDidSaveTextDocument(() => {
+            console.log('File saved, scheduling index update...');
+            this.scheduleIndexUpdate();
+        });
+        
+        // Watch for file deletions, renames, etc.
+        vscode.workspace.onDidCloseTextDocument(() => {
+            console.log('File closed, scheduling index update...');
+            this.scheduleIndexUpdate();
+        });
+    }
+    
+    /**
+     * Schedule an index update, debounced to avoid too many updates
+     */
+    private scheduleIndexUpdate(): void {
+        this.indexUpdateDebouncer.debounce(() => {
+            console.log('Updating search index after file changes...');
+            // Pull the latest items from all providers without forcing a full refresh
+            this.updateIndexFromProviders();
+        });
+    }
+    
+    /**
+     * Update the index by getting the latest items from all providers
+     * This is faster than a full refresh because it doesn't force providers to re-index
+     */
+    private async updateIndexFromProviders(): Promise<void> {
+        // Temporary map to deduplicate items
+        const deduplicationMap = new Map<string, SearchItem>();
+        
+        // Collect latest items from all providers
+        for (const [name, provider] of this.providers.entries()) {
+            try {
+                const items = await provider.getItems();
+                console.log(`Got ${items.length} items from ${name} provider after file change`);
+                
+                // Deduplicate items as they come in
+                for (const item of items) {
+                    const dedupeKey = this.getDeduplicationKey(item);
+                    if (!deduplicationMap.has(dedupeKey)) {
+                        deduplicationMap.set(dedupeKey, item);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error getting items from ${name} provider:`, error);
+            }
+        }
+        
+        // Update the allItems array with the latest items
+        this.allItems = Array.from(deduplicationMap.values());
+        
+        console.log(`Index update completed: ${this.allItems.length} items (after deduplication)`);
     }
     
     /**

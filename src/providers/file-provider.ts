@@ -25,7 +25,7 @@ export class FileSearchProvider implements SearchProvider {
         }
         return this.fileItems;
     }
-    
+
     /**
      * Refresh the file index
      */

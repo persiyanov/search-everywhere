@@ -27,6 +27,11 @@ A fast, fuzzy "Search Everywhere" feature for VSCode, inspired by the IntelliJ/P
   - Cleaner results with duplicate removal
   - Relative file paths for better readability
 
+- **Real-time Indexing**:
+  - New symbols appear in search results immediately after file changes
+  - Seamless tracking of file modifications, additions, and deletions
+  - Intelligent debouncing to avoid excessive reindexing
+
 - **Optimized Performance**:
   - Fast startup and search times
   - Background indexing to avoid UI freezes
