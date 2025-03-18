@@ -130,6 +130,9 @@ export interface SearchEverywhereConfig {
     fuzzySearch: {
         library: string;
     };
+    preview: {
+        enabled: boolean;
+    };
     // Global exclusions that apply to all providers (files, symbols, etc.)
     exclusions?: string[];
     // Debug mode for detailed logging

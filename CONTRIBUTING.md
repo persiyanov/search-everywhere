@@ -6,13 +6,17 @@ Thank you for your interest in contributing to the Search Everywhere extension! 
 
 1. Fork and clone the repository
 2. Install dependencies:
+
    ```bash
    npm install
    ```
+
 3. Build the extension:
+
    ```bash
    npm run compile
    ```
+
 4. Launch the extension in development mode:
    - Open the project in VSCode
    - Press F5 to start debugging
@@ -20,14 +24,18 @@ Thank you for your interest in contributing to the Search Everywhere extension! 
 ## Submitting Changes
 
 1. Create a new branch for your changes:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
+
 2. Make your changes and test them thoroughly
 3. Commit your changes with descriptive commit messages:
+
    ```bash
    git commit -m "Add feature: description of changes"
    ```
+
 4. Push your branch and create a pull request against the main branch
 5. Wait for feedback and address any review comments
 
@@ -90,4 +98,4 @@ Search Everywhere aims to be fast and responsive. When making changes:
 
 By contributing, you agree that your contributions will be licensed under the project's MIT License.
 
-Thank you for contributing to Search Everywhere! 
+Thank you for contributing to Search Everywhere!

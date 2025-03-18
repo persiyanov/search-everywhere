@@ -23,6 +23,9 @@ export function getConfiguration(): SearchEverywhereConfig {
         fuzzySearch: {
             library: config.get<string>('fuzzySearch.library', 'fuzzysort')
         },
+        preview: {
+            enabled: config.get<boolean>('preview.enabled', true)
+        },
         exclusions: config.get<string[]>('exclusions', []),
         debug: config.get<boolean>('debug', false)
     };

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { SearchItem, SearchItemType } from '../core/types';
 import { SearchService } from '../core/search-service';
+import { getConfiguration } from '../utils/config';
 
 /**
  * Filter categories for search results
@@ -21,6 +22,8 @@ export class SearchUI {
     private quickPick: vscode.QuickPick<SearchQuickPickItem>;
     private searchDebounce: NodeJS.Timeout | undefined;
     private lastQuery: string = '';
+    private config = getConfiguration();
+    private previewDisposables: vscode.Disposable[] = [];
     
     // Active filter category
     private activeFilter: FilterCategory = FilterCategory.All;
@@ -54,6 +57,16 @@ export class SearchUI {
         this.quickPick.onDidAccept(this.onDidAccept.bind(this));
         this.quickPick.onDidHide(this.onDidHide.bind(this));
         this.quickPick.onDidTriggerButton(this.onDidTriggerButton.bind(this));
+        
+        // Add preview handler
+        this.quickPick.onDidChangeActive(this.onDidChangeActive.bind(this));
+        
+        // Listen for configuration changes
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('searchEverywhere.preview')) {
+                this.config = getConfiguration();
+            }
+        });
     }
     
     /**
@@ -107,7 +120,7 @@ export class SearchUI {
         for (const filter of orderedFilters) {
             // Get the base filter button
             const baseButton = this.filterButtons.get(filter);
-            if (!baseButton) continue;
+            if (!baseButton) {continue;}
             
             const isActive = filter === this.activeFilter;
             const filterName = filter.charAt(0).toUpperCase() + filter.slice(1);
@@ -233,6 +246,9 @@ export class SearchUI {
         // Clear any previous search query
         this.quickPick.value = '';
         this.lastQuery = '';
+        
+        // Refresh configuration
+        this.config = getConfiguration();
         
         // Update buttons to reflect the active filter
         this.updateFilterButtons();
@@ -363,6 +379,89 @@ export class SearchUI {
         
         // Clear quick pick items to free memory
         this.quickPick.items = [];
+        
+        // Dispose of any preview disposables
+        this.disposePreviewDisposables();
+    }
+    
+    /**
+     * Dispose of preview-related disposables
+     */
+    private disposePreviewDisposables(): void {
+        for (const disposable of this.previewDisposables) {
+            disposable.dispose();
+        }
+        this.previewDisposables = [];
+    }
+    
+    /**
+     * Handle selection changes for previewing
+     */
+    private onDidChangeActive(items: readonly SearchQuickPickItem[]): void {
+        // Skip if preview is disabled or no items are selected
+        if (!this.config.preview.enabled || items.length === 0) {
+            return;
+        }
+        
+        // Get the selected item
+        const selectedItem = items[0];
+        
+        // Skip separators and items without an original item
+        if (selectedItem.kind === vscode.QuickPickItemKind.Separator || !selectedItem.originalItem) {
+            return;
+        }
+        
+        // Clear previous preview disposables
+        this.disposePreviewDisposables();
+        
+        // Handle different types of items
+        const item = selectedItem.originalItem;
+        
+        // Only preview items that have a URI and can be opened in the editor
+        if ('uri' in item && item.uri instanceof vscode.Uri) {
+            this.previewItem(item as SearchItem & { uri: vscode.Uri });
+        }
+    }
+    
+    /**
+     * Preview a search item in the editor
+     */
+    private async previewItem(item: SearchItem & { uri: vscode.Uri }): Promise<void> {
+        try {
+            // Open the document
+            const document = await vscode.workspace.openTextDocument(item.uri);
+            
+            // Define preview options
+            const options: vscode.TextDocumentShowOptions = {
+                preserveFocus: true, // Keep focus on the search dialog
+                preview: true        // Show in preview tab
+            };
+            
+            // Add range if available (for symbols)
+            if ('range' in item && item.range instanceof vscode.Range) {
+                options.selection = item.range;
+            }
+            
+            // Show the document
+            const editor = await vscode.window.showTextDocument(document, options);
+            
+            // Highlight the range if available
+            if ('range' in item && item.range instanceof vscode.Range) {
+                // Create decoration type for highlighting
+                const decorationType = vscode.window.createTextEditorDecorationType({
+                    backgroundColor: new vscode.ThemeColor('editor.findMatchHighlightBackground'),
+                    borderColor: new vscode.ThemeColor('editor.findMatchHighlightBorder')
+                });
+                
+                // Apply decoration
+                editor.setDecorations(decorationType, [item.range]);
+                
+                // Add to disposables to clean up when selection changes
+                this.previewDisposables.push(decorationType);
+            }
+        } catch (error) {
+            console.error('Error previewing item:', error);
+        }
     }
     
     /**

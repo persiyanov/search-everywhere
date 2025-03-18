@@ -88,6 +88,7 @@ Configure how user activity affects search results:
 ```
 
 The weight value (0-1) determines how much your activity influences the results:
+
 - `0`: Only relevance to search query matters
 - `1`: Only frequency of use matters
 - `0.5`: Equal balance between relevance and frequency
@@ -109,6 +110,7 @@ Choose between different fuzzy search implementations:
 ```
 
 Available options:
+
 - `fuzzysort`: Generally faster, especially for large datasets
 - `fuzzaldrin-plus`: May provide better relevance for certain queries
 
