@@ -2,7 +2,7 @@
   "name": "search-everywhere",
   "displayName": "JetBrains Search Everywhere",
   "description": "PyCharm-style Search Everywhere with fuzzy search, class filter, and intelligent prioritization",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "extruct-ai",
   "author": {
     "name": "Dimitri Persiianov"
