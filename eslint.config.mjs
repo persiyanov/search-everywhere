@@ -24,7 +24,7 @@ export default [{
         eqeqeq: "warn",
         "no-throw-literal": "warn",
         semi: "warn",
-        
+
         // Rules for controlling empty lines
         "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1, "maxBOF": 0 }],
         "padding-line-between-statements": [
