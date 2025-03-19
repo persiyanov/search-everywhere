@@ -4,6 +4,14 @@ All notable changes to the "Search Everywhere" extension will be documented in t
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.5] - 2025-03-21
+
+### Added
+
+- Full-text search capability for searching inside file contents
+- New "Text" filter category in the UI for text search results
+- Configuration options to enable/disable text search
+
 ## [0.1.4] - 2025-03-20
 
 ### Added

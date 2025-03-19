@@ -27,4 +27,4 @@ declare module 'fuzzysort' {
 
     export function go<T>(search: string, targets: T[], options?: KeysOptions<T>): Array<Result & { obj: T }>;
     export function highlight(result: Result, tag?: string): string | null;
-} 
+}

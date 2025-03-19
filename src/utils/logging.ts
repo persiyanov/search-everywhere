@@ -12,11 +12,13 @@ class Logger {
     public static log(message: string) {
         this.ensureInitialized();
         const timestamp = new Date().toISOString();
+
         this.outputChannel.appendLine(`[${timestamp}] ${message}`);
     }
 
     public static debug(message: string) {
         const config = vscode.workspace.getConfiguration('searchEverywhere');
+
         if (config.get<boolean>('debug', false)) {
             this.log(`[DEBUG] ${message}`);
         }
@@ -34,4 +36,4 @@ class Logger {
     }
 }
 
-export default Logger; 
+export default Logger;

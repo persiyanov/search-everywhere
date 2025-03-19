@@ -17,7 +17,7 @@ export class FuzzaldrinAdapter implements FuzzySearcher {
         }
 
         const startTime = performance.now();
-        
+
         // Create searchable objects
         const searchableItems = items.map(item => ({
             originalItem: item,
@@ -36,13 +36,16 @@ export class FuzzaldrinAdapter implements FuzzySearcher {
             const item = result.originalItem;
             // @ts-ignore - Cast to any to avoid TypeScript issues
             const score = fuzzaldrinPlus.score(result.searchText, query) / 100;
+
             item.score = score;
+
             return item;
         });
 
         const endTime = performance.now();
+
         console.log(`Fuzzaldrin search took ${endTime - startTime}ms for ${items.length} items`);
 
         return foundItems.slice(0, limit);
     }
-} 
+}

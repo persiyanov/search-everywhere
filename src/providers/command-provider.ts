@@ -12,24 +12,24 @@ export class CommandSearchProvider implements SearchProvider {
         // For commands, we always refresh to ensure we have the latest
         return this.getCommandItems();
     }
-    
+
     /**
      * Refresh the command index
      */
     public async refresh(): Promise<void> {
         // Nothing to persist for commands, so refresh is the same as getItems
     }
-    
+
     /**
      * Get all commands as search items
      */
     private async getCommandItems(): Promise<CommandSearchItem[]> {
         const commandItems: CommandSearchItem[] = [];
-        
+
         try {
             // Get all available commands
             const commands = await vscode.commands.getCommands(true);
-            
+
             // Filter out internal commands
             const filteredCommands = commands.filter(cmd => {
                 return !cmd.startsWith('_') && // Internal command
@@ -38,7 +38,7 @@ export class CommandSearchProvider implements SearchProvider {
                        !cmd.startsWith('editor.') && // Editor commands
                        !cmd.includes('.'); // Often internal namespaced commands
             });
-            
+
             // Create command items
             for (const command of filteredCommands) {
                 const commandItem: CommandSearchItem = {
@@ -53,27 +53,28 @@ export class CommandSearchProvider implements SearchProvider {
                         await vscode.commands.executeCommand(command);
                     }
                 };
-                
+
                 commandItems.push(commandItem);
             }
         } catch (error) {
             console.error('Error getting commands:', error);
         }
-        
+
         return commandItems;
     }
-    
+
     /**
      * Format a command ID to a readable name
      */
     private formatCommandName(command: string): string {
         // Split camelCase and kebab-case commands
         let name = command.replace(/([a-z])([A-Z])/g, '$1 $2');
+
         name = name.replace(/-/g, ' ');
-        
+
         // Capitalize first letter of each word
         name = name.replace(/\b\w/g, (c) => c.toUpperCase());
-        
+
         return name;
     }
-} 
+}

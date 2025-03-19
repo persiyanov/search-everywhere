@@ -17,11 +17,12 @@ export class FuzzysortAdapter implements FuzzySearcher {
         }
 
         const startTime = performance.now();
-        
+
         // We'll create a simpler version that works with any objects
         const targets = items.map(item => {
             // Create concatenated search text
             const searchText = `${item.label} ${item.description || ''} ${item.detail || ''}`;
+
             return {
                 searchText,
                 originalItem: item
@@ -38,13 +39,16 @@ export class FuzzysortAdapter implements FuzzySearcher {
         const foundItems = results.map((result: any) => {
             const item = result.obj.originalItem;
             const normalizedScore = Math.max(0, 1000 + result.score) / 1000;
+
             item.score = normalizedScore;
+
             return item;
         });
 
         const endTime = performance.now();
+
         console.log(`Fuzzysort search took ${endTime - startTime}ms for ${items.length} items`);
 
         return foundItems.slice(0, limit);
     }
-} 
+}

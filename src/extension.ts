@@ -10,20 +10,20 @@ import Logger from './utils/logging';
 export function activate(context: vscode.ExtensionContext) {
 	Logger.initialize();
 	Logger.debug('Search Everywhere extension activated');
-	
+
 	console.log('Activating Search Everywhere extension...');
-	
+
 	// Create the search service
 	const searchService = new SearchService(context);
-	
+
 	// Create the search UI
 	const searchUI = new SearchUI(searchService);
-	
+
 	// Register search command
 	const searchDisposable = vscode.commands.registerCommand('search-everywhere.search', () => {
 		searchUI.show();
 	});
-	
+
 	// Register rebuild index command
 	const rebuildDisposable = vscode.commands.registerCommand('search-everywhere.rebuildIndex', async () => {
 		// Show progress notification
@@ -35,26 +35,26 @@ export function activate(context: vscode.ExtensionContext) {
 			},
 			async (progress) => {
 				progress.report({ increment: 0 });
-				
+
 				try {
 					// Force refresh all indexes
 					await searchService.refreshIndex(true);
-					
+
 					// Show success message
 					vscode.window.showInformationMessage('Search Everywhere indexes rebuilt successfully!');
 				} catch (error) {
 					// Show error message
 					vscode.window.showErrorMessage(`Failed to rebuild indexes: ${error}`);
 				}
-				
+
 				progress.report({ increment: 100 });
 			}
 		);
 	});
-	
+
 	// Add commands to context
 	context.subscriptions.push(searchDisposable, rebuildDisposable);
-	
+
 	console.log('Search Everywhere extension activated');
 }
 

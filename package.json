@@ -2,7 +2,7 @@
   "name": "search-everywhere",
   "displayName": "JetBrains Search Everywhere",
   "description": "PyCharm-style Search Everywhere with fuzzy search, class filter, and intelligent prioritization",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "publisher": "extruct-ai",
   "author": {
     "name": "Dimitri Persiianov"
@@ -70,6 +70,11 @@
           "default": true,
           "description": "Include VSCode commands in search results"
         },
+        "searchEverywhere.indexing.includeText": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include text search results from file contents"
+        },
         "searchEverywhere.activity.enabled": {
           "type": "boolean",
           "default": true,
@@ -91,6 +96,11 @@
           "type": "number",
           "default": 100,
           "description": "Maximum number of results to show"
+        },
+        "searchEverywhere.performance.maxTextResults": {
+          "type": "number",
+          "default": 20,
+          "description": "Maximum number of text search results per file"
         },
         "searchEverywhere.fuzzySearch.library": {
           "type": "string",

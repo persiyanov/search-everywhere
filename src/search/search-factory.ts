@@ -13,12 +13,14 @@ export class SearchFactory {
         switch (library) {
             case 'fuzzaldrin-plus':
                 return new FuzzaldrinAdapter();
+
             case 'fuzzysort':
+
             default:
                 return new FuzzysortAdapter();
         }
     }
-    
+
     /**
      * Get all available searchers for benchmarking
      */
@@ -28,4 +30,4 @@ export class SearchFactory {
             new FuzzaldrinAdapter()
         ];
     }
-} 
+}

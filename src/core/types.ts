@@ -8,6 +8,7 @@ export enum SearchItemType {
     Command = 'command',
     Symbol = 'symbol',
     Class = 'class',        // Added for specific class filtering
+    TextMatch = 'text'      // Text search matches
 }
 
 /**
@@ -26,22 +27,30 @@ export enum SymbolKindGroup {
 export function mapSymbolKindToGroup(kind: vscode.SymbolKind): SymbolKindGroup {
     switch (kind) {
         case vscode.SymbolKind.Class:
+
         case vscode.SymbolKind.Interface:
+
         case vscode.SymbolKind.Struct:
+
         case vscode.SymbolKind.Enum:
             return SymbolKindGroup.Class;
-            
+
         case vscode.SymbolKind.Function:
+
         case vscode.SymbolKind.Method:
+
         case vscode.SymbolKind.Constructor:
             return SymbolKindGroup.Function;
-            
+
         case vscode.SymbolKind.Variable:
+
         case vscode.SymbolKind.Property:
+
         case vscode.SymbolKind.Field:
+
         case vscode.SymbolKind.Constant:
             return SymbolKindGroup.Variable;
-            
+
         default:
             return SymbolKindGroup.Other;
     }
@@ -58,7 +67,7 @@ export interface SearchItem {
     type: SearchItemType;
     iconPath?: vscode.ThemeIcon | vscode.Uri;
     action: () => Promise<void>;
-    
+
     // Optional scores for ranking
     score?: number;         // Fuzzy search score
     activityScore?: number; // User activity score
@@ -96,6 +105,17 @@ export interface SymbolSearchItem extends SearchItem {
 }
 
 /**
+ * Text match search item interface
+ */
+export interface TextMatchItem extends SearchItem {
+    type: SearchItemType.TextMatch;
+    uri: vscode.Uri;
+    range: vscode.Range;
+    lineText: string;     // The content of the line containing the match
+    matchText: string;    // The actual matched text
+}
+
+/**
  * Interface for fuzzy searchers
  */
 export interface FuzzySearcher {
@@ -119,6 +139,7 @@ export interface SearchEverywhereConfig {
         includeFiles: boolean;
         includeSymbols: boolean;
         includeCommands: boolean;
+        includeText: boolean;
     };
     activity: {
         enabled: boolean;
@@ -126,6 +147,7 @@ export interface SearchEverywhereConfig {
     };
     performance: {
         maxResults: number;
+        maxTextResults: number;
     };
     fuzzySearch: {
         library: string;
@@ -137,4 +159,4 @@ export interface SearchEverywhereConfig {
     exclusions?: string[];
     // Debug mode for detailed logging
     debug?: boolean;
-} 
+}
