@@ -4,7 +4,7 @@ All notable changes to the "Search Everywhere" extension will be documented in t
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [0.1.3] - 2025-03-20
+## [0.1.4] - 2025-03-20
 
 ### Added
 
